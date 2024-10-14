@@ -8,9 +8,16 @@ export default function Dashboard() {
   const { user, loading } = useAuth();
   const [crose, setCrose] = useState([]);
   const router = useRouter();
-  const token = localStorage.getItem("token");
+  
+  // Ensure localStorage is only accessed in the browser
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   async function Getcrose() {
+    if (!token) {
+      console.log("No token available");
+      return;
+    }
+
     try {
       let res = await fetch("https://esanapi.utipong.info/auth/users/me/", {
         method: 'GET',
@@ -27,7 +34,10 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    Getcrose();
+    // Run the function only when window is defined (i.e., in the browser)
+    if (typeof window !== "undefined") {
+      Getcrose();
+    }
   }, []);
 
   useEffect(() => {
